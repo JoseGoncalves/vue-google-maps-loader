@@ -6,7 +6,7 @@ A Vue 3 composable to dynamically load and reload the **Google Maps JavaScript A
 
 - Built on the official `@googlemaps/js-api-loader`
 - Vue 3 Composition API ready
-- Works seamlessly with [vue3-google-map](https://www.npmjs.com/package/vue3-google-map) via the `:api-promise` prop
+- Works seamlessly with [vue3-google-map](https://github.com/inocan-group/vue3-google-map) via the `:api-promise` prop
 - Cleans up injected scripts, links, and styles
 - Automatically reloads Maps API when the locale changes
 
@@ -31,19 +31,18 @@ const { locale } = useI18n();
 const apiOptions = { key: import.meta.env.VITE_GOOGLE_API_KEY };
 
 // Initialize the loader with reactive i18n locale
-const { isAvailable, mapsPromise } = useGoogleMapsLoader(apiOptions, locale);
+const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 </script>
 
 <template>
 	<div v-if="isAvailable">
 		<GoogleMap
-			:api-promise="mapsPromise"
+			:api-promise
 			:center="{ lat: 38.725282, lng: -9.149996 }"
 			:zoom="12"
 			style="width: 100%; height: 500px"
 		/>
 	</div>
-	<div v-else>
-		Reloading Google Maps API…
-	</div>
+	<div v-else>Reloading Google Maps API…</div>
 </template>
+```

@@ -78,11 +78,11 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 	const scope = effectScope(true);
 	store = scope.run(() => {
 		const isAvailable = ref(true);
-		const mapsPromise = ref(promise);
+		const apiPromise = ref(promise);
 
 		watch(locale, async (language) => {
 			// Wait for a previous load to finish
-			await mapsPromise.value;
+			await apiPromise.value;
 
 			// Notify maps components that a reload is to be made
 			isAvailable.value = false;
@@ -91,13 +91,13 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 			// Reload the Maps API with the new language
 			unloadMaps();
 			await bootstrap({ ...options, language });
-			mapsPromise.value = loadLibraries(libraries);
+			apiPromise.value = loadLibraries(libraries);
 
 			// Notify maps components that a new Maps API is available
 			isAvailable.value = true;
 		});
 
-		return { isAvailable, mapsPromise };
+		return { isAvailable, apiPromise };
 	});
 
 	return store;

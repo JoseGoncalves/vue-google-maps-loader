@@ -6,7 +6,7 @@ import type { APIOptions } from '@googlemaps/js-api-loader';
 
 export interface UseGoogleMapsLoaderReturn {
 	isAvailable: Ref<boolean>;
-	mapsPromise: Ref<Promise<typeof google>>;
+	apiPromise: Ref<Promise<typeof google>>;
 }
 
 /**
