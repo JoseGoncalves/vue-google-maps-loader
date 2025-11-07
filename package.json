@@ -1,0 +1,50 @@
+{
+	"name": "vue-google-maps-loader",
+	"version": "1.0.0",
+	"description": "A Vue 3 composable to dynamically load and reload the Google Maps JavaScript API with localization support.",
+	"type": "module",
+	"main": "./src/index.js",
+	"types": "./src/googleMapsLoader.d.ts",
+	"exports": {
+		".": {
+			"import": "./src/index.js",
+			"types": "./src/googleMapsLoader.d.ts"
+		}
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"composable",
+		"google-maps",
+		"loader",
+		"i18n"
+	],
+	"author": "José Miguel Gonçalves <jose.goncalves@inov.pt>",
+	"license": "Apache-2.0",
+	"scripts": {
+		"lint": "eslint . --fix",
+		"format": "prettier --write ."
+	},
+	"peerDependencies": {
+		"vue": "^3.3.0",
+		"vue3-google-map": "^0.25.0"
+	},
+	"dependencies": {
+		"@googlemaps/js-api-loader": "^2.0.2",
+		"@sindresorhus/is": "^7.1.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.1",
+		"@vitejs/plugin-vue": "^6.0.1",
+		"@vue/eslint-config-prettier": "^10.2.0",
+		"eslint": "^9.39.1",
+		"eslint-plugin-vue": "^10.5.1",
+		"globals": "^16.5.0",
+		"prettier": "^3.6.2"
+	},
+	"files": [
+		"src",
+		"LICENSE",
+		"README.md"
+	]
+}
