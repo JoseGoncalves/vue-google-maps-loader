@@ -4,9 +4,11 @@ A Vue 3 composable to dynamically load and reload the **Google Maps JavaScript A
 
 ## ✨ Features
 
-- Reloads the Maps API dynamically when language changes
-- Uses the official `@googlemaps/js-api-loader` under the hood
-- Compatible with Vue 3’s Composition API
+- Built on the official `@googlemaps/js-api-loader`
+- Vue 3 Composition API ready
+- Works seamlessly with [vue3-google-map](https://www.npmjs.com/package/vue3-google-map) via the `:api-promise` prop
+- Cleans up injected scripts, links, and styles
+- Automatically reloads Maps API when the locale changes
 
 ## 🚀 Installation
 
