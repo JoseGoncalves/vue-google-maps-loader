@@ -7,12 +7,19 @@ import { isNonEmptyArray, isObject } from '@sindresorhus/is';
 
 let store = null;
 
+const log = (...args) => {
+	if (import.meta.env.DEV) {
+		console.log(`[GoogleMapsLoader]`, ...args);
+	}
+};
+
 // Imported and adapted from @googlemaps/js-api-loader's bootstrap code.
 // The js-api-loader does not allow calling setOptions() more than once, so we use this
 // adapted bootstrap function to be able to reload the Maps API.
 // Original bootstrap code: https://github.com/googlemaps/js-api-loader/blob/main/src/bootstrap.js
 // js-api-loader doc: https://github.com/googlemaps/js-api-loader/blob/main/README.md#documentation
 const bootstrap = async (bootstrapParams) => {
+	log('Bootstrap:', bootstrapParams);
 	window.google = window.google || {};
 	window.google.maps = window.google.maps || {};
 
@@ -38,11 +45,14 @@ const bootstrap = async (bootstrapParams) => {
 };
 
 const loadLibraries = async (libraries) => {
+	log('Load Libraries:', libraries);
 	await Promise.all(libraries.map((lib) => importLibrary(lib)));
 	return window.google;
 };
 
 const unloadMaps = () => {
+	log('Unload Maps');
+
 	// Remove script and link tags
 	const nodes = document.head.querySelectorAll(
 		'script[src*="maps.googleapis.com"], link[href*="fonts.googleapis.com"]',
@@ -72,6 +82,7 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 	const { libraries: apiLibs } = apiOptions;
 	const libraries = isNonEmptyArray(apiLibs) ? apiLibs : ['core'];
 	const options = { ...apiOptions, libraries, language: locale.value };
+	log('Set Options:', options);
 	setOptions(options);
 	const promise = loadLibraries(libraries);
 
