@@ -101,8 +101,10 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 
 			// Reload the Maps API with the new language
 			unloadMaps();
-			await bootstrap({ ...options, language });
-			apiPromise.value = loadLibraries(libraries);
+			apiPromise.value = (async () => {
+				await bootstrap({ ...options, language });
+				return loadLibraries(libraries);
+			})();
 
 			// Notify maps components that a new Maps API is available
 			isAvailable.value = true;
