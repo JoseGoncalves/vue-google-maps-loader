@@ -76,6 +76,7 @@ const unloadMaps = () => {
 		const content = el.textContent || '';
 		if (
 			content.includes('gm-') ||
+			content.includes('-checkbox-menu-item') ||
 			content.includes('-marker-view') ||
 			content.includes('-keyboard-shortcuts-view')
 		) {
