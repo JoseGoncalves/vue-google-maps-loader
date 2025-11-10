@@ -2,7 +2,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/vue-google-maps-loader)](https://www.npmjs.com/package/vue-google-maps-loader)
 [![NPM License](https://img.shields.io/npm/l/vue-google-maps-loader)](https://opensource.org/license/apache-2-0)
-[![NPM Downloads](https://img.shields.io/npm/dm/vue-google-maps-loader)](https://npm-stat.com/charts.html?package=vue-google-maps-loader)
+[![NPM Downloads](https://img.shields.io/npm/dm/vue-google-maps-loader?cacheSeconds=10800)](https://npm-stat.com/charts.html?package=vue-google-maps-loader)
 
 A Vue 3 composable to dynamically load and reload the **Google Maps JavaScript API** with localization support.
 
