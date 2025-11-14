@@ -14,6 +14,14 @@ A Vue 3 composable to dynamically load and reload the **Google Maps JavaScript A
 - Cleans up injected scripts, links, and styles
 - Automatically reloads Maps API when the locale changes
 
+## 🤔 Why use this?
+
+The official `@googlemaps/js-api-loader` doesn't support:
+- **Locale switching** - Can't reload the API with a different language at runtime
+- **Vue reactivity** - No integration with Vue's reactive system
+
+This composable solves these issues by wrapping the loader with Vue 3 reactivity and handling dynamic reloads.
+
 ## 🚀 Installation
 
 ```sh
@@ -21,6 +29,8 @@ npm install vue-google-maps-loader
 ```
 
 ## ⚡ Usage
+
+## With vue3-google-map
 
 ```vue
 <script setup>
@@ -39,14 +49,52 @@ const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 </script>
 
 <template>
-	<div v-if="isAvailable">
-		<GoogleMap
-			:api-promise
-			:center="{ lat: 38.725282, lng: -9.149996 }"
-			:zoom="12"
-			style="width: 100%; height: 500px"
-		/>
-	</div>
-	<div v-else>Reloading Google Maps API…</div>
+	<GoogleMap
+		v-if="isAvailable"
+		:api-promise
+		:center="{ lat: 38.725282, lng: -9.149996 }"
+		:zoom="12"
+		style="width: 100%; height: 500px"
+	/>
+</template>
+```
+
+### Standalone
+
+```vue
+<script setup>
+import { useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useGoogleMapsLoader } from 'vue-google-maps-loader';
+
+const { locale } = useI18n();
+
+const apiOptions = { key: import.meta.env.VITE_GOOGLE_API_KEY };
+
+const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
+
+const mapElement = useTemplateRef('map-element');
+
+watch(
+	isAvailable,
+	async (available) => {
+		if (!available) return;
+
+		const google = await apiPromise.value;
+
+		new google.maps.Map(mapElement.value, {
+			center: { lat: 38.725282, lng: -9.149996 },
+			zoom: 12,
+		});
+	},
+	{ immediate: true },
+);
+</script>
+
+<template>
+	<div
+		ref="map-element"
+		style="width: 100%; height: 500px"
+	/>
 </template>
 ```

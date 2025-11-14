@@ -1,6 +1,6 @@
 {
 	"name": "vue-google-maps-loader",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "A Vue 3 composable to dynamically load and reload the Google Maps JavaScript API with localization support.",
 	"type": "module",
 	"main": "./src/index.js",
@@ -28,6 +28,11 @@
 	"peerDependencies": {
 		"vue": "^3.3.0",
 		"vue3-google-map": "^0.25.0"
+	},
+	"peerDependenciesMeta": {
+		"vue3-google-map": {
+			"optional": true
+		}
 	},
 	"dependencies": {
 		"@googlemaps/js-api-loader": "^2.0.2",
