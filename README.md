@@ -30,7 +30,7 @@ npm install vue-google-maps-loader
 
 ## ⚡ Usage
 
-## With vue3-google-map
+### With vue3-google-map
 
 ```vue
 <script setup>
