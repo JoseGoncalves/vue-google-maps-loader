@@ -22,7 +22,7 @@
 	"author": "José Miguel Gonçalves <jose.goncalves@inov.pt>",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/JoseGoncalves/vue-google-maps-loader.git"
+		"url": "git+https://github.com/JoseGoncalves/vue-google-maps-loader.git"
 	},
 	"license": "Apache-2.0",
 	"scripts": {
