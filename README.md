@@ -99,3 +99,13 @@ watch(
 	/>
 </template>
 ```
+
+## ⚠️ Disclaimer
+
+The technique used to reload the Google Maps JavaScript API in this package is **not officially endorsed by Google**.
+It relies on behaviour that, while functional, is not guaranteed to remain stable or supported in future updates of the API.
+
+This loader **cannot be used in projects that include Google Maps Web Components**, because Web Components cannot be undefined or removed once they are registered.
+As a result, the reloading strategy used by this package is incompatible with environments where Web Components are present.
+
+For more information about Google Maps Web Components, see [Build maps faster with Web Components](https://mapsplatform.google.com/resources/blog/build-maps-faster-web-components/).
