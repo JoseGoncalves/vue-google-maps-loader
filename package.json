@@ -31,7 +31,7 @@
 	},
 	"peerDependencies": {
 		"vue": "^3.3.0",
-		"vue3-google-map": "^0.25.0"
+		"vue3-google-map": ">=0.25.0 <1.0.0"
 	},
 	"peerDependenciesMeta": {
 		"vue3-google-map": {
