@@ -40,9 +40,7 @@ const bootstrap = async (bootstrapParams) => {
 	await new Promise((resolve, reject) => {
 		const script = document.createElement('script');
 		const searchParams = new URLSearchParams();
-		const { libraries } = bootstrapParams;
 
-		searchParams.set('libraries', [...libraries].join(','));
 		Object.keys(bootstrapParams).forEach((key) => {
 			searchParams.set(toSnakeCase(key), bootstrapParams[key]);
 		});
@@ -106,6 +104,9 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 		watch(locale, async (language) => {
 			// Wait for a previous load to finish
 			await apiPromise.value;
+
+			// Skip if the locale has already changed again
+			if (locale.value !== language) return;
 
 			// Notify maps components that a reload is to be made
 			isAvailable.value = false;
