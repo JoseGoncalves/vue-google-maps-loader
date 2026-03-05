@@ -4,7 +4,7 @@
 [![NPM License](https://img.shields.io/npm/l/vue-google-maps-loader)](https://opensource.org/license/apache-2-0)
 [![NPM Downloads](https://img.shields.io/npm/dm/vue-google-maps-loader?cacheSeconds=21600)](https://npm-stat.com/charts.html?package=vue-google-maps-loader)
 
-A Vue 3 composable to dynamically load and reload the **Google Maps JavaScript API** with localization support.
+A Vue 3 composable for loading the **Google Maps JavaScript API** with reactive locale switching.
 
 ## ✨ Features
 
@@ -29,6 +29,22 @@ This composable solves these issues by wrapping the loader with Vue 3 reactivity
 npm install vue-google-maps-loader
 ```
 
+## 📖 API
+
+```ts
+useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
+  isAvailable: Ref<boolean>;
+  apiPromise: Ref<Promise<typeof google>>;
+}
+```
+
+- **`apiOptions`** — Options passed to `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `version`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
+- **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
+- **`isAvailable`** — `false` while the API is loading or reloading, `true` when ready.
+- **`apiPromise`** — Resolves to the `google` global once the API is loaded. Updates on each reload.
+
+> **Note:** `useGoogleMapsLoader` is a singleton. Only the first call initializes the loader — subsequent calls return the same instance regardless of the arguments passed. Call it once at the app or plugin level and use the returned refs anywhere in your app.
+
 ## ⚡ Usage
 
 ### With vue3-google-map
@@ -39,13 +55,10 @@ import { useI18n } from 'vue-i18n';
 import { GoogleMap } from 'vue3-google-map';
 import { useGoogleMapsLoader } from 'vue-google-maps-loader';
 
-// Access your app's current locale via vue-i18n
 const { locale } = useI18n();
 
-// Google Maps API options
 const apiOptions = { key: import.meta.env.VITE_GOOGLE_API_KEY };
 
-// Initialize the loader with reactive i18n locale
 const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 </script>
 
@@ -100,10 +113,10 @@ watch(
 </template>
 ```
 
+`locale` can be any `Ref<string>` — this example uses `vue-i18n`, but any reactive ref works.
+
 ## ⚠️ Disclaimer
 
-The technique used to reload the Google Maps JavaScript API in this package is **not officially endorsed by Google**.
-It relies on behaviour that, while functional, is not guaranteed to remain stable or supported in future updates of the API.
+- **Unofficial reload technique** — Reloading the Maps API works by manually removing Google's injected scripts, stylesheets, and styles from the DOM and deleting `window.google.maps`. This relies on internal implementation details that are not part of the Google Maps JavaScript API and are not guaranteed to remain stable across future updates.
 
-This loader **cannot be used in projects that include [Google Maps Web Components](https://mapsplatform.google.com/resources/blog/build-maps-faster-web-components/)**, because Web Components cannot be undefined or removed once they are registered.
-As a result, the reloading strategy used by this package is incompatible with environments where Web Components are present.
+- **Incompatible with Google Maps Web Components** — This loader cannot be used alongside [Google Maps Web Components](https://mapsplatform.google.com/resources/blog/build-maps-faster-web-components/) (e.g. `<gmp-map>`), because custom elements cannot be unregistered once defined, making the reload strategy ineffective in those environments.
