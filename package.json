@@ -1,14 +1,14 @@
 {
 	"name": "vue-google-maps-loader",
 	"version": "2.1.4",
-	"description": "A Vue 3 composable to dynamically load and reload the Google Maps JavaScript API with localization support.",
+	"description": "A Vue 3 composable for loading the Google Maps JavaScript API with reactive locale switching.",
 	"type": "module",
 	"main": "./src/index.js",
 	"types": "./src/googleMapsLoader.d.ts",
 	"exports": {
 		".": {
-			"import": "./src/index.js",
-			"types": "./src/googleMapsLoader.d.ts"
+			"types": "./src/googleMapsLoader.d.ts",
+			"import": "./src/index.js"
 		}
 	},
 	"keywords": [
@@ -30,7 +30,7 @@
 		"format": "prettier --write ."
 	},
 	"peerDependencies": {
-		"vue": "^3.5.27",
+		"vue": "^3.2.0",
 		"vue3-google-map": ">=0.25.0 <1.0.0"
 	},
 	"peerDependenciesMeta": {
@@ -43,12 +43,12 @@
 		"@sindresorhus/is": "^7.2.0"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.39.2",
+		"@eslint/js": "^10.0.1",
 		"@vue/eslint-config-prettier": "^10.2.0",
-		"eslint": "^9.39.2",
-		"eslint-plugin-vue": "^10.7.0",
-		"globals": "^17.0.0",
-		"prettier": "^3.8.0"
+		"eslint": "^10.0.2",
+		"eslint-plugin-vue": "^10.8.0",
+		"globals": "^17.4.0",
+		"prettier": "^3.8.1"
 	},
 	"files": [
 		"src",
