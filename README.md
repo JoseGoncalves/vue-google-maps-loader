@@ -38,9 +38,9 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 }
 ```
 
-- **`apiOptions`** — Options passed to `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `version`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
+- **`apiOptions`** — Options passed to `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
 - **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
-- **`isAvailable`** — `false` while the API is loading or reloading, `true` when ready.
+- **`isAvailable`** — `false` briefly during a locale reload (so dependent components unmount and remount with the new API), `true` otherwise. Await `apiPromise` for actual load completion.
 - **`apiPromise`** — Resolves to the `google` global once the API is loaded. Updates on each reload.
 
 > **Note:** `useGoogleMapsLoader` is a singleton. Only the first call initializes the loader — subsequent calls return the same instance regardless of the arguments passed. Call it once at the app or plugin level and use the returned refs anywhere in your app.
