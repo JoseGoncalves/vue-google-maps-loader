@@ -31,3 +31,4 @@ This is a minimal Vue 3 composable library with a single exported function: `use
 
 **Constraints:**
 - Incompatible with Google Maps Web Components (custom elements can't be re-registered after unload)
+- Browser-only — reads `document` synchronously on call, so it throws under SSR
