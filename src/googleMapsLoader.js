@@ -19,7 +19,7 @@ import { isNonEmptyArray, isObject } from '@sindresorhus/is';
 let store = null;
 
 const log = (...args) => {
-	if (import.meta.env.DEV) {
+	if (import.meta.env?.DEV) {
 		console.log(`[GoogleMapsLoader]`, ...args);
 	}
 };
