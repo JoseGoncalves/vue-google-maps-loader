@@ -102,8 +102,9 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 		const apiPromise = ref(promise);
 
 		watch(locale, async (language) => {
-			// Wait for a previous load to finish
-			await apiPromise.value;
+			// Wait for a previous load to settle, ignoring failures so that a
+			// failed load does not block future reloads
+			await apiPromise.value.catch(() => {});
 
 			// Skip if the locale has already changed again
 			if (locale.value !== language) return;
