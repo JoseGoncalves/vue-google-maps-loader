@@ -24,6 +24,15 @@ const log = (...args) => {
 	}
 };
 
+// Nodes present in <head> when the current load started. Anything matching
+// the Maps patterns that is not in this set was injected by the Maps API and
+// is ours to remove; anything in it belongs to the host app.
+let headNodesBeforeLoad = new Set();
+
+const snapshotHead = () => {
+	headNodesBeforeLoad = new Set(document.head.children);
+};
+
 // Imported and adapted from @googlemaps/js-api-loader's bootstrap code.
 // The js-api-loader does not allow calling setOptions() more than once, so we use this
 // adapted bootstrap function to be able to reload the Maps API.
@@ -31,6 +40,7 @@ const log = (...args) => {
 // js-api-loader doc: https://github.com/googlemaps/js-api-loader/blob/main/README.md#documentation
 const bootstrap = async (bootstrapParams) => {
 	log('Bootstrap:', bootstrapParams);
+	snapshotHead();
 	window.google = window.google || {};
 	window.google.maps = window.google.maps || {};
 
@@ -62,15 +72,20 @@ const loadLibraries = async (libraries) => {
 const unloadMaps = () => {
 	log('Unload Maps');
 
+	const wasInjected = (el) => !headNodesBeforeLoad.has(el);
+
 	// Remove script and link tags
 	const nodes = document.head.querySelectorAll(
 		'script[src*="maps.googleapis.com"], link[href*="fonts.googleapis.com"]',
 	);
-	nodes.forEach((el) => el.remove());
+	nodes.forEach((el) => {
+		if (wasInjected(el)) el.remove();
+	});
 
 	// Remove style tags
 	const styleNodes = document.head.querySelectorAll('style:not([type])');
 	styleNodes.forEach((el) => {
+		if (!wasInjected(el)) return;
 		const content = el.textContent || '';
 		if (
 			content.includes('gm-') ||
@@ -93,6 +108,7 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 	const libraries = isNonEmptyArray(apiLibs) ? apiLibs : ['core'];
 	const options = { ...apiOptions, libraries, language: locale.value };
 	log('Set Options:', options);
+	snapshotHead();
 	setOptions(options);
 	const promise = loadLibraries(libraries);
 
