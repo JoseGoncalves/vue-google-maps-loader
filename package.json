@@ -1,6 +1,6 @@
 {
 	"name": "vue-google-maps-loader",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"description": "A Vue 3 composable for loading the Google Maps JavaScript API with reactive locale switching.",
 	"type": "module",
 	"main": "./src/index.js",
