@@ -38,24 +38,25 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 }
 ```
 
+### Parameters
+
 - **`apiOptions`** — Options passed to `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
 - **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
+
+### Returns
+
 - **`isAvailable`** — `false` briefly during a locale reload (so dependent components unmount and remount with the new API), `true` otherwise. Await `apiPromise` for actual load completion.
-- **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the script itself fails to load (network error, blocked by a browser extension or by `script-src`). Updates on each reload.
+- **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the script itself fails to load. Updates on each reload.
 
-> **Note:** A rejected `apiPromise` means the script never loaded. Key problems are not reported that way: Google still serves a working script for an invalid, unauthorized or unbilled key, so the promise resolves and `isAvailable` stays `true`. Those failures arrive later, as a `console.error` naming the cause (e.g. `InvalidKeyMapError`), a call to `window.gm_authFailure` if you define one, and an error overlay on the map. See [Error messages](https://developers.google.com/maps/documentation/javascript/error-messages).
+### Call it once
 
-> **Note:** `useGoogleMapsLoader` is a singleton. Only the first call initializes the loader — subsequent calls return the same instance regardless of the arguments passed. Call it once at the app or plugin level and use the returned refs anywhere in your app.
+`useGoogleMapsLoader` is a singleton. Only the first call initializes the loader — subsequent calls return the same instance regardless of the arguments passed. Call it once at the app or plugin level and use the returned refs anywhere in your app.
 
-> **Note:** Browser-only. The composable reads `document` synchronously, so calling it during server-side rendering throws `ReferenceError: document is not defined`. Under Nuxt or a similar SSR setup, call it from client-only code — inside `onMounted`, or from a `.client` component.
+### Handling load errors
 
-> **Note:** Reloading assigns the Maps API script URL through a [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) policy named `vue-google-maps-loader`. If your page enforces `require-trusted-types-for 'script'` **and** restricts policy names with a `trusted-types` directive, allow that name alongside the one `@googlemaps/js-api-loader` registers for the initial load:
->
-> ```
-> Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @googlemaps/js-api-loader vue-google-maps-loader
-> ```
->
-> Pages that enforce Trusted Types without a `trusted-types` directive need no changes.
+`apiPromise` rejects only when the script never loaded at all: a network error, or a request blocked by a browser extension or by `script-src`.
+
+Key problems do not reject. Google serves a working script for an invalid, unauthorized or unbilled key, so the promise resolves and `isAvailable` stays `true`. Those failures arrive later, as a `console.error` naming the cause (e.g. `InvalidKeyMapError`), a call to `window.gm_authFailure` if you define one, and an error overlay on the map. See [Error messages](https://developers.google.com/maps/documentation/javascript/error-messages).
 
 ## ⚡ Usage
 
@@ -126,6 +127,22 @@ watch(
 ```
 
 `locale` can be any `Ref<string>` — this example uses `vue-i18n`, but any reactive ref works.
+
+## 🧩 Compatibility
+
+### Server-side rendering
+
+Browser-only. The composable reads `document` synchronously, so calling it during server-side rendering throws `ReferenceError: document is not defined`. Under Nuxt or a similar SSR setup, call it from client-only code — inside `onMounted`, or from a `.client` component.
+
+### Content Security Policy
+
+Reloading assigns the Maps API script URL through a [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) policy named `vue-google-maps-loader`. If your page enforces `require-trusted-types-for 'script'` **and** restricts policy names with a `trusted-types` directive, allow that name alongside the one `@googlemaps/js-api-loader` registers for the initial load:
+
+```
+Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @googlemaps/js-api-loader vue-google-maps-loader
+```
+
+Pages that enforce Trusted Types without a `trusted-types` directive need no changes.
 
 ## ⚠️ Disclaimer
 
