@@ -62,10 +62,10 @@ const getScriptUrlPolicy = () => {
 	return scriptUrlPolicy;
 };
 
-// Imported and adapted from @googlemaps/js-api-loader's bootstrap code.
-// The js-api-loader does not allow calling setOptions() more than once, so we use this
-// adapted bootstrap function to be able to reload the Maps API.
-// Original bootstrap code: https://github.com/googlemaps/js-api-loader/blob/main/src/bootstrap.js
+// Adapted from the bootstrap code of @googlemaps/js-api-loader 2.1.1, which
+// cannot be reused as is: setOptions() only runs once, and a reload needs a
+// second call. Diff against the tag below when bumping the dependency.
+// https://github.com/googlemaps/js-api-loader/blob/v2.1.1/src/bootstrap.js
 // js-api-loader doc: https://github.com/googlemaps/js-api-loader/blob/main/README.md#documentation
 const bootstrap = async (bootstrapParams) => {
 	log('Bootstrap:', bootstrapParams);
