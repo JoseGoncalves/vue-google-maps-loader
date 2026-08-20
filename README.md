@@ -47,6 +47,14 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 > **Note:** Browser-only. The composable reads `document` synchronously, so calling it during server-side rendering throws `ReferenceError: document is not defined`. Under Nuxt or a similar SSR setup, call it from client-only code — inside `onMounted`, or from a `.client` component.
 
+> **Note:** Reloading assigns the Maps API script URL through a [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) policy named `vue-google-maps-loader`. If your page enforces `require-trusted-types-for 'script'` **and** restricts policy names with a `trusted-types` directive, allow that name alongside the one `@googlemaps/js-api-loader` registers for the initial load:
+>
+> ```
+> Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @googlemaps/js-api-loader vue-google-maps-loader
+> ```
+>
+> Pages that enforce Trusted Types without a `trusted-types` directive need no changes.
+
 ## ⚡ Usage
 
 ### With vue3-google-map

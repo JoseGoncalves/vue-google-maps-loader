@@ -13,6 +13,13 @@ const log = (...args) => {
 	}
 };
 
+// Keeps a failed load from surfacing as an unhandled rejection before a
+// consumer awaits apiPromise. Consumers still see the rejection.
+const markHandled = (promise) => {
+	promise.catch(() => {});
+	return promise;
+};
+
 // Nodes present in <head> when the current load started. Anything matching
 // the Maps patterns that is not in this set was injected by the Maps API and
 // is ours to remove; anything in it belongs to the host app.
@@ -20,6 +27,39 @@ let headNodesBeforeLoad = new Set();
 
 const snapshotHead = () => {
 	headNodesBeforeLoad = new Set(document.head.children);
+};
+
+// script.src is a Trusted Types sink. The js-api-loader wraps its own URL but
+// does not export the helper, so reloads need their own policy — under its own
+// name, since the loader registers its one during the initial load.
+const TRUSTED_TYPES_POLICY_NAME = 'vue-google-maps-loader';
+
+const passThroughPolicy = { createScriptURL: (url) => url };
+
+let scriptUrlPolicy = null;
+
+const getScriptUrlPolicy = () => {
+	if (isObject(scriptUrlPolicy)) return scriptUrlPolicy;
+
+	const { trustedTypes } = globalThis;
+
+	if (!trustedTypes) {
+		scriptUrlPolicy = passThroughPolicy;
+		return scriptUrlPolicy;
+	}
+
+	try {
+		scriptUrlPolicy = trustedTypes.createPolicy(TRUSTED_TYPES_POLICY_NAME, {
+			createScriptURL: (url) => url,
+		});
+	} catch (error) {
+		// Unsupported, or the name is not allowed by the page's `trusted-types`
+		// directive. The pass-through only works where nothing is enforced.
+		log('Trusted Types policy unavailable:', error);
+		scriptUrlPolicy = passThroughPolicy;
+	}
+
+	return scriptUrlPolicy;
 };
 
 // Imported and adapted from @googlemaps/js-api-loader's bootstrap code.
@@ -44,7 +84,9 @@ const bootstrap = async (bootstrapParams) => {
 			searchParams.set(toSnakeCase(key), bootstrapParams[key]);
 		});
 		searchParams.set('callback', 'google.maps.__ib__');
-		script.src = `https://maps.googleapis.com/maps/api/js?${searchParams}`;
+		script.src = getScriptUrlPolicy().createScriptURL(
+			`https://maps.googleapis.com/maps/api/js?${searchParams}`,
+		);
 		script.onerror = () => reject(new Error('The Maps API could not load'));
 		script.nonce = document.querySelector('script[nonce]')?.nonce || '';
 		window.google.maps.__ib__ = resolve;
@@ -99,7 +141,7 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 	log('Set Options:', options);
 	snapshotHead();
 	setOptions(options);
-	const promise = loadLibraries(libraries);
+	const promise = markHandled(loadLibraries(libraries));
 
 	const scope = effectScope(true);
 	store = scope.run(() => {
@@ -120,10 +162,12 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 
 			// Reload the Maps API with the new language
 			unloadMaps();
-			apiPromise.value = (async () => {
-				await bootstrap({ ...options, language });
-				return loadLibraries(libraries);
-			})();
+			apiPromise.value = markHandled(
+				(async () => {
+					await bootstrap({ ...options, language });
+					return loadLibraries(libraries);
+				})(),
+			);
 
 			// Notify maps components that a new Maps API is available
 			isAvailable.value = true;
