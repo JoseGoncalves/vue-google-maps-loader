@@ -100,6 +100,15 @@ const loadLibraries = async (libraries) => {
 	return window.google;
 };
 
+// Class selectors only. The three suffixes carry an obfuscated prefix that
+// changes between API releases.
+const MAPS_STYLE_SELECTORS = [
+	/\.gm-[\w-]+/,
+	/\.[\w-]+-checkbox-menu-item/,
+	/\.[\w-]+-marker-view/,
+	/\.[\w-]+-keyboard-shortcuts-view/,
+];
+
 const unloadMaps = () => {
 	log('Unload Maps');
 
@@ -118,12 +127,7 @@ const unloadMaps = () => {
 	styleNodes.forEach((el) => {
 		if (!wasInjected(el)) return;
 		const content = el.textContent || '';
-		if (
-			content.includes('gm-') ||
-			content.includes('-checkbox-menu-item') ||
-			content.includes('-marker-view') ||
-			content.includes('-keyboard-shortcuts-view')
-		) {
+		if (MAPS_STYLE_SELECTORS.some((selector) => selector.test(content))) {
 			el.remove();
 		}
 	});
