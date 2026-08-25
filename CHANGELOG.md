@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Match the Maps styles by class selector when unloading, instead of by substring. An application style that mentions `gm-` in a comment, a string or a `url()` is no longer removed.
+- Documented that a reload removes an application's own `<style>` when its content matches Google's class names, and how to re-add it.
+- Updated ESLint to `^10.9.1`.
+
 ## [2.2.1] - 2026-08-20
 
 ### Fixed
