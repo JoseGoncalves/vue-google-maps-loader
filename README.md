@@ -144,6 +144,18 @@ Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @goog
 
 Pages that enforce Trusted Types without a `trusted-types` directive need no changes.
 
+### App styles that match Google's
+
+Reloading removes `<style>` tags that appeared in `document.head` after the most recent load began and that mention Google's internal class names, such as `gm-`. A stylesheet of your own can match — hiding a control with `.gm-style-cc { display: none }` is the usual case — and is removed along with Google's.
+
+Only untyped tags are considered: a `<style>` carrying a `type` attribute is skipped, as are tags already present when the load began and stylesheets loaded through a `<link>`. That covers most apps — Vite, for one, gives your own component styles a `type` in development. What stays exposed is an untyped `<style>` injected at runtime, from CSS-in-JS or from a dependency's styles routed through your bundler. Re-add it once the reload completes:
+
+```js
+watch(isAvailable, (available) => {
+	if (available) injectMapStyles();
+});
+```
+
 ## ⚠️ Disclaimer
 
 - **Unofficial reload technique** — Reloading the Maps API works by manually removing Google's injected scripts, stylesheets, and styles from the DOM and deleting `window.google.maps`. This relies on internal implementation details that are not part of the Google Maps JavaScript API and are not guaranteed to remain stable across future updates.
