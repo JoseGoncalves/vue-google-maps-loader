@@ -78,7 +78,7 @@ const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 <template>
 	<GoogleMap
 		v-if="isAvailable"
-		:api-promise
+		:api-promise="apiPromise"
 		:center="{ lat: 38.725282, lng: -9.149996 }"
 		:zoom="12"
 		style="width: 100%; height: 500px"
@@ -90,7 +90,7 @@ const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 
 ```vue
 <script setup>
-import { useTemplateRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useGoogleMapsLoader } from 'vue-google-maps-loader';
 
@@ -100,7 +100,7 @@ const apiOptions = { key: import.meta.env.VITE_GOOGLE_API_KEY };
 
 const { isAvailable, apiPromise } = useGoogleMapsLoader(apiOptions, locale);
 
-const mapElement = useTemplateRef('map-element');
+const mapElement = ref(null);
 
 watch(
 	isAvailable,
@@ -120,7 +120,7 @@ watch(
 
 <template>
 	<div
-		ref="map-element"
+		ref="mapElement"
 		style="width: 100%; height: 500px"
 	/>
 </template>
