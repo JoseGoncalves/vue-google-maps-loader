@@ -162,4 +162,6 @@ The same goes for Google Fonts. Maps injects its own `<link>` to `fonts.googleap
 
 - **Unofficial reload technique** — Reloading the Maps API works by manually removing Google's injected scripts, stylesheets, and styles from the DOM and deleting `window.google.maps`. This relies on internal implementation details that are not part of the Google Maps JavaScript API and are not guaranteed to remain stable across future updates.
 
+- **Rapid locale changes** — Changing the locale twice within about a second can leave the map controls in the previous language, or without labels. The unloaded Maps API stays in memory and may still fetch one of its modules, which the newly loaded API then takes for its own. The next locale change corrects it.
+
 - **Incompatible with Google Maps Web Components** — This loader cannot be used alongside [Google Maps Web Components](https://mapsplatform.google.com/resources/blog/build-maps-faster-web-components/) (e.g. `<gmp-map>`), because custom elements cannot be unregistered once defined, making the reload strategy ineffective in those environments.

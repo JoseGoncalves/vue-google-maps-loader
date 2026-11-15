@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Documented that two locale changes within about a second can leave the map controls in the previous language until the next change.
+
 ## [2.3.0] - 2026-11-15
 
 ### Fixed
