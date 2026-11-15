@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated `@googlemaps/js-api-loader` to `^2.1.3`.
 - Replaced `@vue/eslint-config-prettier` with `eslint-config-prettier`.
-- Updated ESLint to `^10.13.0`, `globals` to `^17.13.0` and Prettier to `^3.9.10`.
+- Updated ESLint to `^10.15.0`, `globals` to `^17.14.0` and Prettier to `^3.10.1`.
 - Removed the unused `eslint-plugin-vue` development dependency.
 - Rewrote the README examples in syntax supported by Vue 3.2.
 
