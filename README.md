@@ -8,7 +8,7 @@ A Vue 3 composable for loading the **Google Maps JavaScript API** with reactive 
 
 ## ✨ Features
 
-- Built on the official [@googlemaps/js-api-loader](https://github.com/googlemaps/js-api-loader)
+- Takes the same options as the official [@googlemaps/js-api-loader](https://github.com/googlemaps/js-api-loader)
 - Vue 3 Composition API ready
 - Works seamlessly with [vue3-google-map](https://github.com/inocan-group/vue3-google-map) via the `:api-promise` prop
 - Cleans up injected scripts, links, and styles
@@ -21,7 +21,7 @@ The official `@googlemaps/js-api-loader` doesn't support:
 - **Locale switching** - Can't reload the API with a different language at runtime
 - **Vue reactivity** - No integration with Vue's reactive system
 
-This composable solves these issues by wrapping the loader with Vue 3 reactivity and handling dynamic reloads.
+This composable solves these issues with a loader of its own, adapted from the official one, that integrates with Vue 3 reactivity and handles dynamic reloads.
 
 ## 🚀 Installation
 
@@ -40,13 +40,13 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 ### Parameters
 
-- **`apiOptions`** — Options passed to `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
+- **`apiOptions`** — The options of `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
 - **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
 
 ### Returns
 
 - **`isAvailable`** — `false` briefly during a locale reload (so dependent components unmount and remount with the new API), `true` otherwise. Await `apiPromise` for actual load completion.
-- **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the script itself fails to load. Updates on each reload.
+- **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the API fails to load. Updates on each reload.
 
 ### Call it once
 
@@ -54,7 +54,7 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 ### Handling load errors
 
-`apiPromise` rejects only when the script never loaded at all: a network error, or a request blocked by a browser extension or by `script-src`.
+`apiPromise` rejects only when the API never loaded at all: a network error, a request blocked by a browser extension or by `script-src`, or Google answering the request with an error instead of the API. A later locale change tries again.
 
 Key problems do not reject. Google serves a working script for an invalid, unauthorized or unbilled key, so the promise resolves and `isAvailable` stays `true`. Those failures arrive later, as a `console.error` naming the cause (e.g. `InvalidKeyMapError`), a call to `window.gm_authFailure` if you define one, and an error overlay on the map. See [Error messages](https://developers.google.com/maps/documentation/javascript/error-messages).
 
@@ -136,10 +136,10 @@ Browser-only. The composable reads `document` synchronously, so calling it durin
 
 ### Content Security Policy
 
-Reloading assigns the Maps API script URL through a [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) policy named `vue-google-maps-loader`. If your page enforces `require-trusted-types-for 'script'` **and** restricts policy names with a `trusted-types` directive, allow that name alongside the one `@googlemaps/js-api-loader` registers for the initial load:
+The Maps API script URL is assigned through a [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API) policy named `vue-google-maps-loader`. If your page enforces `require-trusted-types-for 'script'` **and** restricts policy names with a `trusted-types` directive, allow that name:
 
 ```
-Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @googlemaps/js-api-loader vue-google-maps-loader
+Content-Security-Policy: require-trusted-types-for 'script'; trusted-types vue-google-maps-loader
 ```
 
 Pages that enforce Trusted Types without a `trusted-types` directive need no changes.

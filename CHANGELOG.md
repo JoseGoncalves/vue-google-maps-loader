@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- No longer freeze the tab when Google answers the first load with an error payload instead of the API ([js-api-loader#1304](https://github.com/googlemaps/js-api-loader/issues/1304)). `apiPromise` now rejects, and a later locale change tries again.
+
 ### Changed
 
+- The first load now goes through the same code as reloads instead of `@googlemaps/js-api-loader`'s `setOptions()`. `google.maps.importLibrary` therefore only exists once `apiPromise` has resolved: code that calls it, or the loader's `importLibrary()`, must await `apiPromise` first. The deprecated `apiKey` option alias is no longer translated; use `key`.
+- Only the `vue-google-maps-loader` Trusted Types policy is registered. `@googlemaps/js-api-loader` can be dropped from a `trusted-types` directive.
 - Updated `@googlemaps/js-api-loader` to `^2.1.3`.
 - Replaced `@vue/eslint-config-prettier` with `eslint-config-prettier`.
 - Updated ESLint to `^10.15.0`, `globals` to `^17.14.0` and Prettier to `^3.10.1`.

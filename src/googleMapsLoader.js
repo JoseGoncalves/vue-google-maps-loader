@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { nextTick, ref, watch, effectScope } from 'vue';
-import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
-import { isNonEmptyArray, isObject } from '@sindresorhus/is';
+import { isFunction, isNonEmptyArray, isObject } from '@sindresorhus/is';
 
 let store = null;
 
@@ -29,9 +28,8 @@ const snapshotHead = () => {
 	headNodesBeforeLoad = new Set(document.head.children);
 };
 
-// script.src is a Trusted Types sink. The js-api-loader wraps its own URL but
-// does not export the helper, so reloads need their own policy — under its own
-// name, since the loader registers its one during the initial load.
+// script.src is a Trusted Types sink. The js-api-loader wraps its URL the same
+// way but does not export the helper, so this is a copy under its own name.
 const TRUSTED_TYPES_POLICY_NAME = 'vue-google-maps-loader';
 
 const passThroughPolicy = { createScriptURL: (url) => url };
@@ -64,7 +62,10 @@ const getScriptUrlPolicy = () => {
 
 // Adapted from the bootstrap code of @googlemaps/js-api-loader 2.1.3, which
 // cannot be reused as is: setOptions() only runs once, and a reload needs a
-// second call. Diff against the tag below when bumping the dependency.
+// second call. It also installs a stand-in importLibrary that loops forever
+// when Google answers with an error payload (js-api-loader issue #1304), so
+// the first load goes through here as well.
+// Diff against the tag below when bumping the dependency.
 // https://github.com/googlemaps/js-api-loader/blob/v2.1.3/src/bootstrap.js
 // js-api-loader doc: https://github.com/googlemaps/js-api-loader/blob/main/README.md#documentation
 const bootstrap = async (bootstrapParams) => {
@@ -96,7 +97,13 @@ const bootstrap = async (bootstrapParams) => {
 
 const loadLibraries = async (libraries) => {
 	log('Load Libraries:', libraries);
-	await Promise.all(libraries.map((lib) => importLibrary(lib)));
+	// Missing when the script ran but did not deliver the API, e.g. Google
+	// answered with an error payload
+	const { maps } = window.google;
+	if (!isFunction(maps.importLibrary)) {
+		throw new Error('The Maps API could not load');
+	}
+	await Promise.all(libraries.map((lib) => maps.importLibrary(lib)));
 	return window.google;
 };
 
@@ -141,11 +148,17 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 
 	const { libraries: apiLibs } = apiOptions;
 	const libraries = isNonEmptyArray(apiLibs) ? apiLibs : ['core'];
-	const options = { ...apiOptions, libraries, language: locale.value };
-	log('Set Options:', options);
-	snapshotHead();
-	setOptions(options);
-	const promise = markHandled(loadLibraries(libraries));
+	const options = { ...apiOptions, libraries };
+
+	const load = (language) =>
+		markHandled(
+			(async () => {
+				await bootstrap({ ...options, language });
+				return loadLibraries(libraries);
+			})(),
+		);
+
+	const promise = load(locale.value);
 
 	const scope = effectScope(true);
 	store = scope.run(() => {
@@ -166,12 +179,7 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 
 			// Reload the Maps API with the new language
 			unloadMaps();
-			apiPromise.value = markHandled(
-				(async () => {
-					await bootstrap({ ...options, language });
-					return loadLibraries(libraries);
-				})(),
-			);
+			apiPromise.value = load(language);
 
 			// Notify maps components that a new Maps API is available
 			isAvailable.value = true;
