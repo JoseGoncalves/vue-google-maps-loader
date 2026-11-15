@@ -8,7 +8,7 @@ A Vue 3 composable for loading the **Google Maps JavaScript API** with reactive 
 
 ## ✨ Features
 
-- Takes the same options as the official [@googlemaps/js-api-loader](https://github.com/googlemaps/js-api-loader)
+- Takes the same options as the official [@googlemaps/js-api-loader](https://github.com/googlemaps/js-api-loader), without depending on it
 - Vue 3 Composition API ready
 - Works seamlessly with [vue3-google-map](https://github.com/inocan-group/vue3-google-map) via the `:api-promise` prop
 - Cleans up injected scripts, links, and styles
@@ -21,7 +21,7 @@ The official `@googlemaps/js-api-loader` doesn't support:
 - **Locale switching** - Can't reload the API with a different language at runtime
 - **Vue reactivity** - No integration with Vue's reactive system
 
-This composable solves these issues with a loader of its own, adapted from the official one, that integrates with Vue 3 reactivity and handles dynamic reloads.
+This composable solves these issues with a loader of its own, adapted from the official one, that integrates with Vue 3 reactivity and handles dynamic reloads. You do not need to install `@googlemaps/js-api-loader`.
 
 ## 🚀 Installation
 
@@ -40,7 +40,7 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 ### Parameters
 
-- **`apiOptions`** — The options of `@googlemaps/js-api-loader` (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). Defaults `libraries` to `['core']` if not specified.
+- **`apiOptions`** — The same options `@googlemaps/js-api-loader` accepts (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). The `APIOptions` type is exported from this package. Defaults `libraries` to `['core']` if not specified.
 - **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
 
 ### Returns

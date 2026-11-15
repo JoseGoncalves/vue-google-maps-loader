@@ -65,7 +65,8 @@ const getScriptUrlPolicy = () => {
 // second call. It also installs a stand-in importLibrary that loops forever
 // when Google answers with an error payload (js-api-loader issue #1304), so
 // the first load goes through here as well.
-// Diff against the tag below when bumping the dependency.
+// It is no longer a dependency; diff against the tag below to pick up
+// upstream changes.
 // https://github.com/googlemaps/js-api-loader/blob/v2.1.3/src/bootstrap.js
 // js-api-loader doc: https://github.com/googlemaps/js-api-loader/blob/main/README.md#documentation
 const bootstrap = async (bootstrapParams) => {

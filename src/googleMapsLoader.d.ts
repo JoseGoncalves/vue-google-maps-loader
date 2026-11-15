@@ -2,7 +2,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Ref } from 'vue';
-import type { APIOptions } from '@googlemaps/js-api-loader';
+
+/**
+ * Bootstrap parameters of the Maps JavaScript API. Mirrors `APIOptions` from
+ * `@googlemaps/js-api-loader`.
+ */
+export interface APIOptions {
+	key?: string;
+	v?: string;
+	language?: string;
+	region?: string;
+	libraries?: string[];
+	authReferrerPolicy?: string;
+	mapIds?: string[];
+	channel?: string;
+	solutionChannel?: string;
+}
 
 export interface UseGoogleMapsLoaderReturn {
 	isAvailable: Ref<boolean>;

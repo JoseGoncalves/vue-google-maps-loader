@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first load now goes through the same code as reloads instead of `@googlemaps/js-api-loader`'s `setOptions()`. `google.maps.importLibrary` therefore only exists once `apiPromise` has resolved: code that calls it, or the loader's `importLibrary()`, must await `apiPromise` first. The deprecated `apiKey` option alias is no longer translated; use `key`.
 - Only the `vue-google-maps-loader` Trusted Types policy is registered. `@googlemaps/js-api-loader` can be dropped from a `trusted-types` directive.
-- Updated `@googlemaps/js-api-loader` to `^2.1.3`.
+- Removed the `@googlemaps/js-api-loader` dependency, which is no longer used at runtime. `APIOptions` is now declared and exported by this package, and `@types/google.maps` is a direct dependency.
 - Replaced `@vue/eslint-config-prettier` with `eslint-config-prettier`.
 - Updated ESLint to `^10.15.0`, `globals` to `^17.14.0` and Prettier to `^3.10.1`.
 - Removed the unused `eslint-plugin-vue` development dependency.
