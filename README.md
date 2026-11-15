@@ -156,6 +156,8 @@ watch(isAvailable, (available) => {
 });
 ```
 
+The same goes for Google Fonts. Maps injects its own `<link>` to `fonts.googleapis.com`, so one of yours added to `document.head` after the load began is removed with it. Declare it in `index.html`, or re-add it the same way.
+
 ## ⚠️ Disclaimer
 
 - **Unofficial reload technique** — Reloading the Maps API works by manually removing Google's injected scripts, stylesheets, and styles from the DOM and deleting `window.google.maps`. This relies on internal implementation details that are not part of the Google Maps JavaScript API and are not guaranteed to remain stable across future updates.

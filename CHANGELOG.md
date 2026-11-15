@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated ESLint to `^10.15.0`, `globals` to `^17.14.0` and Prettier to `^3.10.1`.
 - Removed the unused `eslint-plugin-vue` development dependency.
 - Rewrote the README examples in syntax supported by Vue 3.2.
+- Documented that a reload removes an application's own Google Fonts `<link>` when it was added after the load began.
 
 ## [2.2.2] - 2026-08-25
 
