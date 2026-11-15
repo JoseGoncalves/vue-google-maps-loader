@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-11-15
+
 ### Fixed
 
 - No longer freeze the tab when Google answers the first load with an error payload instead of the API ([js-api-loader#1304](https://github.com/googlemaps/js-api-loader/issues/1304)). `apiPromise` now rejects, and a later locale change tries again.
@@ -130,7 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release: `useGoogleMapsLoader(apiOptions, locale)`, a singleton composable returning `isAvailable` and `mapsPromise`, which reloads the Google Maps JavaScript API when the locale ref changes and removes the script, link, and style nodes the API injects into `<head>`.
 
-[unreleased]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.2...HEAD
+[unreleased]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.2...v2.3.0
 [2.2.2]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.1.5...v2.2.0
