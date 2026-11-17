@@ -12,7 +12,7 @@ export default defineConfig([
 	globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
 	{
-		files: ['*.{js,mjs}'],
+		files: ['*.{js,mjs}', 'scripts/**'],
 		languageOptions: {
 			globals: {
 				...globals.nodeBuiltin,
@@ -20,7 +20,7 @@ export default defineConfig([
 		},
 	},
 	{
-		ignores: ['*.{js,mjs}'],
+		ignores: ['*.{js,mjs}', 'scripts/**'],
 		languageOptions: {
 			globals: {
 				...globals.browser,

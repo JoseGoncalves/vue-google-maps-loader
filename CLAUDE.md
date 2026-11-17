@@ -7,9 +7,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```sh
 npm run lint      # ESLint with auto-fix
 npm run format    # Prettier formatting (single quotes, single attribute per line)
+npm run --silent release:notes [-- <version>]   # A version's CHANGELOG.md section, for a GitHub release
 ```
 
 There are no build or test scripts — this is a source-only package published directly from `src/`.
+
+## Releasing
+
+`CHANGELOG.md` is the only place release notes are written; the GitHub release body is generated from it. A release is: move the Unreleased entries under a dated version heading and update the compare links, bump the version (`npm version <x.y.z> --no-git-tag-version`), commit as `Release <x.y.z>`, tag `v<x.y.z>` (annotated, message `<x.y.z>`), push `main` and the tag, `npm publish`, then:
+
+```sh
+npm run --silent release:notes | gh release create v<x.y.z> --title <x.y.z> --notes-file -
+```
 
 ## Architecture
 
