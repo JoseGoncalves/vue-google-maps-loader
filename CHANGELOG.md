@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-17
+
 ### Added
 
 - `hasFailed`, a ref that is `true` while the latest load has failed, so an application can show it without watching `apiPromise`.
@@ -15,9 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Locale changes made while a load is in progress now share a single reload, in the latest locale.
-
-### Changed
-
 - Documented that two locale changes within about a second can leave the map controls in the previous language until the next change.
 
 ## [2.3.0] - 2026-11-15
@@ -145,7 +144,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release: `useGoogleMapsLoader(apiOptions, locale)`, a singleton composable returning `isAvailable` and `mapsPromise`, which reloads the Google Maps JavaScript API when the locale ref changes and removes the script, link, and style nodes the API injects into `<head>`.
 
-[unreleased]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.3.0...HEAD
+[unreleased]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.2...v2.3.0
 [2.2.2]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/JoseGoncalves/vue-google-maps-loader/compare/v2.2.0...v2.2.1
