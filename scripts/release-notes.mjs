@@ -1,8 +1,10 @@
 // Copyright (C) 2026 INOV - Instituto de Engenharia de Sistemas e Computadores Inovação
 // SPDX-License-Identifier: Apache-2.0
 
-// Prints the release notes of a version, as recorded in CHANGELOG.md: its
-// section, then the compare link from the references at the bottom.
+// Prints the release notes of a version, as recorded in CHANGELOG.md: the date
+// in its heading, its section, then the compare link from the references at
+// the bottom. The date is stated because GitHub dates a release by when it was
+// created there, which is not when the version was released.
 //
 //   npm run --silent release:notes            (the package.json version)
 //   npm run --silent release:notes -- 2.3.0
@@ -34,6 +36,10 @@ if (!notes) {
 	process.exit(1);
 }
 
+// "## [2.3.0] - 2026-11-15"
+const date = lines[start].split(' - ')[1]?.trim();
+const released = date ? `Released on ${date}\n\n` : '';
+
 const link = lines.find(
 	(line) => line.startsWith(`[${version}]: `) && line.includes('/compare/'),
 );
@@ -41,4 +47,4 @@ const compare = link
 	? `\n\n**Full changelog**: ${link.slice(link.indexOf(': ') + 2)}`
 	: '';
 
-console.log(notes + compare);
+console.log(released + notes + compare);

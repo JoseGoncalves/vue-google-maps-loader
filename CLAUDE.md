@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```sh
 npm run lint      # ESLint with auto-fix
 npm run format    # Prettier formatting (single quotes, single attribute per line)
-npm run --silent release:notes [-- <version>]   # A version's CHANGELOG.md section, for a GitHub release
+npm run --silent release:notes [-- <version>]   # A version's release date and CHANGELOG.md section, for a GitHub release
 ```
 
 There are no build or test scripts — this is a source-only package published directly from `src/`.
