@@ -21,7 +21,15 @@ export interface APIOptions {
 
 export interface UseGoogleMapsLoaderReturn {
 	isAvailable: Ref<boolean>;
+	/** `true` while the latest load is known to have failed. */
+	hasFailed: Ref<boolean>;
 	apiPromise: Ref<Promise<typeof google>>;
+	/**
+	 * Unloads the Maps API and loads it again in the current locale, e.g. to
+	 * retry a failed load. Resolves once the new load has started; await
+	 * `apiPromise` for its outcome.
+	 */
+	reload: () => Promise<void>;
 }
 
 /**

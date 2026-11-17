@@ -12,13 +12,6 @@ const log = (...args) => {
 	}
 };
 
-// Keeps a failed load from surfacing as an unhandled rejection before a
-// consumer awaits apiPromise. Consumers still see the rejection.
-const markHandled = (promise) => {
-	promise.catch(() => {});
-	return promise;
-};
-
 // Nodes present in <head> when the current load started. Anything matching
 // the Maps patterns that is not in this set was injected by the Maps API and
 // is ours to remove; anything in it belongs to the host app.
@@ -151,42 +144,65 @@ export const useGoogleMapsLoader = (apiOptions, locale) => {
 	const libraries = isNonEmptyArray(apiLibs) ? apiLibs : ['core'];
 	const options = { ...apiOptions, libraries };
 
-	const load = (language) =>
-		markHandled(
-			(async () => {
-				await bootstrap({ ...options, language });
-				return loadLibraries(libraries);
-			})(),
-		);
-
-	const promise = load(locale.value);
+	const load = async (language) => {
+		await bootstrap({ ...options, language });
+		return loadLibraries(libraries);
+	};
 
 	const scope = effectScope(true);
 	store = scope.run(() => {
 		const isAvailable = ref(true);
-		const apiPromise = ref(promise);
+		const hasFailed = ref(false);
+		const apiPromise = ref(null);
 
-		watch(locale, async (language) => {
-			// Wait for a previous load to settle, ignoring failures so that a
-			// failed load does not block future reloads
-			await apiPromise.value.catch(() => {});
+		const startLoad = (language) => {
+			const promise = load(language);
+			hasFailed.value = false;
+			apiPromise.value = promise;
 
-			// Skip if the locale has already changed again
-			if (locale.value !== language) return;
+			// Also keeps a failed load from surfacing as an unhandled rejection
+			// before a consumer awaits apiPromise. Consumers still see the
+			// rejection.
+			promise.catch(() => {
+				// A load since replaced no longer counts
+				if (apiPromise.value === promise) hasFailed.value = true;
+			});
+		};
 
-			// Notify maps components that a reload is to be made
-			isAvailable.value = false;
-			await nextTick();
+		startLoad(locale.value);
 
-			// Reload the Maps API with the new language
-			unloadMaps();
-			apiPromise.value = load(language);
+		// The reload waiting to start, shared by every call made meanwhile
+		let pending = null;
 
-			// Notify maps components that a new Maps API is available
-			isAvailable.value = true;
-		});
+		const startReload = async () => {
+			try {
+				// Wait for a previous load to settle, ignoring failures so that a
+				// failed load does not block future reloads
+				await apiPromise.value.catch(() => {});
 
-		return { isAvailable, apiPromise };
+				// Notify maps components that a reload is to be made
+				isAvailable.value = false;
+				await nextTick();
+
+				// Reload the Maps API in the locale current by now
+				unloadMaps();
+				startLoad(locale.value);
+
+				// Notify maps components that a new Maps API is available
+				isAvailable.value = true;
+			} finally {
+				pending = null;
+			}
+		};
+
+		const reload = () => {
+			pending ??= startReload();
+			return pending;
+		};
+
+		watch(locale, reload);
+
+		return { isAvailable, hasFailed, apiPromise, reload };
 	});
 
 	return store;

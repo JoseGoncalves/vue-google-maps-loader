@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `hasFailed`, a ref that is `true` while the latest load has failed, so an application can show it without watching `apiPromise`.
+- `reload()` unloads the Maps API and loads it again in the current locale. It lets an application retry a failed load without a locale change.
+
+### Changed
+
+- Locale changes made while a load is in progress now share a single reload, in the latest locale.
+
 ### Changed
 
 - Documented that two locale changes within about a second can leave the map controls in the previous language until the next change.

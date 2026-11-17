@@ -34,7 +34,9 @@ npm install vue-google-maps-loader
 ```ts
 useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
   isAvailable: Ref<boolean>;
+  hasFailed: Ref<boolean>;
   apiPromise: Ref<Promise<typeof google>>;
+  reload: () => Promise<void>;
 }
 ```
 
@@ -46,7 +48,9 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 ### Returns
 
 - **`isAvailable`** — `false` briefly during a locale reload (so dependent components unmount and remount with the new API), `true` otherwise. Await `apiPromise` for actual load completion.
+- **`hasFailed`** — `true` once the latest load has failed, i.e. when `apiPromise` has rejected. Back to `false` as soon as another load starts.
 - **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the API fails to load. Updates on each reload.
+- **`reload`** — Unloads the Maps API and loads it again in the current locale, exactly as a locale change does. It first waits for a load in progress to settle, and calls made while one reload is waiting share it. The returned promise resolves once the new load has started; await `apiPromise` for its outcome.
 
 ### Call it once
 
@@ -54,7 +58,27 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 ### Handling load errors
 
-`apiPromise` rejects only when the API never loaded at all: a network error, a request blocked by a browser extension or by `script-src`, or Google answering the request with an error instead of the API. A later locale change tries again.
+`apiPromise` rejects only when the API never loaded at all: a network error, a request blocked by a browser extension or by `script-src`, or Google answering the request with an error instead of the API. `hasFailed` turns `true` at the same moment. A later locale change tries again, and so does `reload()`:
+
+```vue
+<script setup>
+const { isAvailable, hasFailed, apiPromise, reload } = useGoogleMapsLoader(
+	apiOptions,
+	locale,
+);
+</script>
+
+<template>
+	<div v-if="hasFailed">
+		The map could not load.
+		<button @click="reload">Retry</button>
+	</div>
+	<GoogleMap
+		v-else-if="isAvailable"
+		:api-promise="apiPromise"
+	/>
+</template>
+```
 
 Key problems do not reject. Google serves a working script for an invalid, unauthorized or unbilled key, so the promise resolves and `isAvailable` stays `true`. Those failures arrive later, as a `console.error` naming the cause (e.g. `InvalidKeyMapError`), a call to `window.gm_authFailure` if you define one, and an error overlay on the map. See [Error messages](https://developers.google.com/maps/documentation/javascript/error-messages).
 
