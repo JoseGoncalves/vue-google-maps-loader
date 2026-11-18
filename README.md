@@ -105,7 +105,9 @@ watch(
 	async (available) => {
 		if (!available) return;
 
-		const google = await apiPromise.value;
+		// On failure, hasFailed turns true; see Handling load errors
+		const google = await apiPromise.value.catch(() => null);
+		if (!google) return;
 
 		new google.maps.Map(mapElement.value, {
 			center: { lat: 38.725282, lng: -9.149996 },
