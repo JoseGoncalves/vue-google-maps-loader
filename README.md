@@ -42,12 +42,12 @@ useGoogleMapsLoader(apiOptions: APIOptions, locale: Ref<string>): {
 
 ### Parameters
 
-- **`apiOptions`** — The same options `@googlemaps/js-api-loader` accepts (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). The `APIOptions` type is exported from this package. Defaults `libraries` to `['core']` if not specified.
+- **`apiOptions`** — The same options `@googlemaps/js-api-loader` accepts (e.g. `key`, `libraries`, `v`). See the [full list of options](https://github.com/googlemaps/js-api-loader#documentation). The `APIOptions` type is exported from this package. Defaults `libraries` to `['core']` if not specified. `language` is always taken from `locale`, so any value passed here is overwritten.
 - **`locale`** — Any reactive `Ref<string>` with a [BCP 47 language tag](https://developers.google.com/maps/faq#languagesupport). The Maps API reloads automatically when this value changes.
 
 ### Returns
 
-- **`isAvailable`** — `false` briefly during a locale reload (so dependent components unmount and remount with the new API), `true` otherwise. Await `apiPromise` for actual load completion.
+- **`isAvailable`** — `false` briefly while the API reloads (after a locale change or a `reload()` call), so dependent components unmount and remount with the new API; `true` otherwise. Await `apiPromise` for actual load completion.
 - **`hasFailed`** — `true` once the latest load has failed, i.e. when `apiPromise` has rejected. Back to `false` as soon as another load starts.
 - **`apiPromise`** — Resolves to the `google` global once the API is loaded, or rejects if the API fails to load. Updates on each reload.
 - **`reload`** — Unloads the Maps API and loads it again in the current locale, exactly as a locale change does. It first waits for a load in progress to settle, and calls made while one reload is waiting share it. The returned promise resolves once the new load has started; await `apiPromise` for its outcome.
